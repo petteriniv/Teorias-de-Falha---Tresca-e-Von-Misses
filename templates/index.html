@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teorias de Falha - Tresca e Von Misses</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+        .container {
+            margin-top: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .resultado {
+            margin-top: 20px;
+            font-style: italic;
+            border-right: 1px solid #ccc;
+            padding-right: 20px;
+        }
+        .resultado p {
+            border-bottom: 1px solid #ddd;
+            padding: 8px 0;
+            margin: 0;
+        }
+        .diagrama {
+            text-align: center;
+        }
+        .diagrama img {
+            width: 100%;
+            max-width: 500px;
+        }
+        @media (min-width: 768px) {
+            .row-resultados-diagrama {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Teorias de Falha - Tresca e Von Misses</h1>
+        <hr>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="mb-3">
+            <div class="form-group">
+                <input type="text" name="sigma_x" placeholder="Tensão Normal σx (MPa)" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <input type="text" name="sigma_y" placeholder="Tensão Normal σy (MPa)" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <input type="text" name="tau_xy" placeholder="Tensão de Cisalhamento τxy (MPa)" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <input type="text" name="ten_e" placeholder="Tensão de Escoamento (MPa)" class="form-control" required>
+            </div>   
+            <button type="submit" class="btn btn-success btn-block">Calcular</button>
+        </form>
+
+        {% if resultado %}
+            <div class="row-resultados-diagrama mt-4">
+                <div class="resultado col-md-6">
+                    <h4>Resultados:</h4>
+                    <p>Raio (R): {{ resultado.R }} MPa</p>
+                    <p>Tensão Média (σmed): {{ resultado.sigma_med }} MPa</p>
+                    <p>Tensão máxima (σmix): {{ resultado.sigma_max }} MPa</p>
+                    <p>Tensão mínima (σmin): {{ resultado.sigma_min }} MPa</p>
+                    <p>τ_max: {{ resultado.tau_max }} MPa</p>
+                    <p>τ_e: {{ resultado.tau_e }} MPa</p>
+                    <p>Coeficiente de Segurança de Tresca: {{ resultado.cst }}</p>
+                    <p>Coeficiente de Segurança de Von-Misses: {{ resultado.csv }}</p>
+                </div>
+                <div class="diagrama col-md-6">
+                    <h4>Diagrama de Tresca e Von Mises</h4>
+                    <img src="data:image/png;base64,{{ plot_url }}" alt="Diagrama de Tresca">
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
